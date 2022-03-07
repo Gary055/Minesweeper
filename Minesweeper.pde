@@ -1,6 +1,6 @@
 import de.bezier.guido.*;
-public int NUM_ROWS = 5;
-public int NUM_COLS = 5;
+public int NUM_ROWS = 25;
+public int NUM_COLS = 25;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines = new ArrayList <MSButton>(); //ArrayList of just the minesweeper buttons that are mined
 
@@ -21,7 +21,7 @@ void setup ()
 }
 public void setMines()
 {
-  for(int i = 0; i < (NUM_ROWS*NUM_COLS)/5; i++)
+  for(int i = 0; i < (NUM_ROWS*NUM_COLS)/10; i++)
   {
     int r = (int)(Math.random()*NUM_ROWS);
     int c = (int)(Math.random()*NUM_COLS);
@@ -44,6 +44,10 @@ public boolean isWon()
 }
 public void displayLosingMessage()
 {
+  for(int i = 0; i < NUM_ROWS; i++)
+    for(int j = 0; j < NUM_COLS; j++)
+      if(!buttons[i][j].isClicked())
+        buttons[i][j].mousePressed();
     //your code here
 }
 public void displayWinningMessage()
@@ -52,10 +56,9 @@ public void displayWinningMessage()
 }
 public boolean isValid(int r, int c)
 {
-    if(r<0||r>NUM_ROWS||c<0||c>NUM_COLS)
-      return false;
-    else  
+    if(r>=0&&r<NUM_ROWS&&c>=0&&c<NUM_COLS)
       return true;
+    return false;
 }
 public int countMines(int row, int col)
 {
@@ -102,6 +105,41 @@ public class MSButton
     public void mousePressed () 
     {
         clicked = true;
+        if(mouseButton == RIGHT)
+          if(flagged == false)
+          {
+            flagged = true;
+          }
+          else
+          {
+            flagged = false;
+            clicked = false;
+          }
+        if(mines.contains(this))
+          displayLosingMessage();
+        else if(countMines(myRow,myCol) > 0)
+        {
+          setLabel(countMines(myRow,myCol));
+        }
+        else
+        {
+          if(isValid(myRow-1, myCol-1) && !buttons[myRow-1][myCol-1].isClicked())
+            buttons[myRow-1][myCol-1].mousePressed();
+          if(isValid(myRow-1, myCol) && !buttons[myRow-1][myCol].isClicked())
+            buttons[myRow-1][myCol].mousePressed();
+          if(isValid(myRow-1, myCol+1) && !buttons[myRow-1][myCol+1].isClicked())
+            buttons[myRow-1][myCol+1].mousePressed();
+          if(isValid(myRow, myCol-1) && !buttons[myRow][myCol-1].isClicked())
+            buttons[myRow][myCol-1].mousePressed();
+          if(isValid(myRow, myCol+1) && !buttons[myRow][myCol+1].isClicked())
+            buttons[myRow][myCol+1].mousePressed();
+          if(isValid(myRow+1, myCol-1) && !buttons[myRow+1][myCol-1].isClicked())
+            buttons[myRow+1][myCol-1].mousePressed();
+          if(isValid(myRow+1, myCol) && !buttons[myRow+1][myCol].isClicked())
+            buttons[myRow+1][myCol].mousePressed();
+          if(isValid(myRow+1, myCol+1) && !buttons[myRow+1][myCol+1].isClicked())
+            buttons[myRow+1][myCol+1].mousePressed();
+        }
         //your code here
     }
     public void draw () 
@@ -130,5 +168,9 @@ public class MSButton
     public boolean isFlagged()
     {
         return flagged;
+    }
+    public boolean isClicked()
+    {
+      return clicked;
     }
 }
